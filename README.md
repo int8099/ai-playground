@@ -80,7 +80,14 @@ uv run pytest
 
 ## 进度追踪
 
-- [x] **W0** 环境与仓库就绪（API 账号 / WSL2 + CUDA / Ollama / 工具链）
+- [ ] **W0** 环境与仓库就绪
+  - [x] 仓库骨架 + SSH 推送
+  - [x] 三家 API 账号 + 密钥（`.env`，已确认被 git 忽略）
+  - [x] WSL2 + Ubuntu 26.04.1
+  - [x] GPU 直通 + PyTorch 2.11.0+cu128（已验证 `capability == (12, 0)`）
+  - [x] API 成本预算表 → `docs/budget.md`
+  - [ ] 常用库（numpy / matplotlib / jupyter）
+  - [ ] Ollama + Qwen3-4B 本地推理验证
 - [ ] **W1–W2** Python 工程能力（asyncio / Pydantic / 装饰器 / 测试）
 - [ ] **W3** 服务化能力（Git / Docker / FastAPI）
 - [ ] **W4** LLM 应用能力（token 成本 / 结构化输出 / Prompt）
