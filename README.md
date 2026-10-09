@@ -29,7 +29,9 @@ ai-playground/
 ├── .gitignore                Python 项目忽略规则
 ├── .env.example              环境变量模板（复制为 .env 后填 Key）
 ├── docs/                     笔记与记录
+│   ├── wsl-setup.md          WSL2 + PyTorch cu128 搭建 Runbook
 │   ├── env-notes.md          环境搭建踩坑记录
+│   ├── budget.md             API 成本预算与用量台账
 │   └── ai-correction-log.md  AI 纠错日志（每天 1 条）
 ├── src/
 │   └── llmkit/               自研 LLM 工具包（W1–W2 起）
