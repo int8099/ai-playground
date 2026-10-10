@@ -80,14 +80,14 @@ uv run pytest
 
 ## 进度追踪
 
-- [x] **W0** 环境与仓库就绪（2026-10-09 ~ 10-10）
+- [x] **W0** 环境与仓库就绪（2026-10-09 ~ 10-10）　**18 项体检全通过**
   - [x] 仓库骨架 + SSH 推送
   - [x] 三家 API 账号 + 密钥（`.env`，已确认被 git 忽略）
   - [x] WSL2 + Ubuntu 26.04.1
   - [x] GPU 直通 + PyTorch 2.11.0+cu128（已验证 `capability == (12, 0)`）
   - [x] API 成本预算表 → `docs/budget.md`
-  - [x] Ollama + Qwen3-4B 本地推理（已验证 `PROCESSOR = 100% GPU`）
-  - [ ] 常用库（numpy / matplotlib / jupyter）
+  - [x] Ollama + Qwen3-4B 本地推理（已验证 `100% GPU`）
+  - [x] 常用库（numpy / matplotlib / jupyter）
   - 体检脚本：`bash scripts/w0-verify.sh`
 - [ ] **W1–W2** Python 工程能力（asyncio / Pydantic / 装饰器 / 测试）
 - [ ] **W3** 服务化能力（Git / Docker / FastAPI）

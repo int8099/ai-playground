@@ -112,13 +112,17 @@ if command -v ollama >/dev/null 2>&1; then
 fi
 
 # GPU 卸载情况
+# 注意：ollama ps 的 PROCESSOR 列本身含空格（如 "100% GPU" 或 "48%/52% CPU/GPU"），
+#       所以不能用固定列号取字段，要按整行内容匹配。
 PS=$(ollama ps 2>/dev/null | tail -n +2)
 if [ -n "$PS" ]; then
-  PROC=$(echo "$PS" | awk '{print $4" "$5}')
-  case "$PROC" in
-    *100%*GPU*) ok "模型运行在 GPU 上：$PROC" ;;
-    *)          warn "模型未完全跑在 GPU：$PROC" ;;
-  esac
+  if echo "$PS" | grep -q '100% GPU'; then
+    ok "模型完全运行在 GPU 上（100% GPU）"
+  elif echo "$PS" | grep -q 'GPU'; then
+    warn "模型部分跑在 GPU，未达 100%：$(echo "$PS" | tail -1)"
+  else
+    warn "模型跑在 CPU 上：$(echo "$PS" | tail -1)"
+  fi
 else
   warn "当前没有已加载的模型（跑一次 ollama run 再看）"
 fi
@@ -158,7 +162,8 @@ fi
 # ------------------------------------------------------------
 sec "5. 磁盘空间"
 # ------------------------------------------------------------
-df -h / "$HOME" | sed '1d' | while read -r line; do echo "  $line"; done
+echo "--- 根文件系统 ---"
+df -h / | sed '1d' | while read -r line; do echo "  $line"; done
 AVAIL=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
 if [ "${AVAIL:-0}" -ge 20 ]; then
   ok "根文件系统可用 ${AVAIL}G"
