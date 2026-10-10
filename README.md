@@ -29,6 +29,7 @@ ai-playground/
 ├── .gitignore                Python 项目忽略规则
 ├── .env.example              环境变量模板（复制为 .env 后填 Key）
 ├── docs/                     笔记与记录
+│   ├── w0-completion-report.md  W0 完成报告（配置说明 + 工作日志）
 │   ├── wsl-setup.md          WSL2 + PyTorch cu128 搭建 Runbook
 │   ├── env-notes.md          环境搭建踩坑记录
 │   ├── budget.md             API 成本预算与用量台账
