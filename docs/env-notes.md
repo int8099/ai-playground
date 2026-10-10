@@ -7,6 +7,56 @@
 - 系统：Windows
 - GPU：RTX 5060 Laptop 8GB（Blackwell 架构）
 - CPU：AMD R9 8940H
+- WSL 发行版：Ubuntu 26.04.1 LTS / Python 3.14.4，用户名 `ubuntuer`
+- WSL 虚拟磁盘位置：
+  `C:\Users\8099\AppData\Local\wsl\{02dd5456-b2f9-4fa8-96f9-78f8c64d4300}\ext4.vhdx`
+  （装 Ollama 前约 9.0 GB）
+
+### 各组件安装位置（速查）
+
+| 内容 | 位置 |
+|---|---|
+| zstd（解压工具） | `/usr/bin/zstd`（apt 包） |
+| Ollama 主程序 | `/usr/local/bin/ollama` |
+| Ollama 运行库（含 CUDA，约 5 GB） | `/usr/local/lib/ollama/` |
+| Ollama 安装包缓存（1.34 GB） | `~/.cache/ollama-dl/`（装完可删） |
+| Ollama 模型 | `~/.ollama/models/` |
+| Ollama 服务日志 | `~/.ollama/serve.log` |
+| Python 库（numpy 等） | `~/.venvs/torch/lib/python3.14/site-packages/` |
+
+> ⚠️ 以上**全部在 WSL 虚拟磁盘内**（即上面那个 `ext4.vhdx`）。
+> 两个后果：
+> 1. **vhdx 只涨不缩** —— 在 WSL 里删文件，C 盘占用不会自动释放，需要手动压缩。
+> 2. **卸载/重装 WSL 发行版 = 这些全部消失**（所以配置脚本都进了 git 仓库）。
+>
+> 想把模型挪出 C 盘的话，可以设 `OLLAMA_MODELS=/mnt/d/ollama-models`。
+
+### 代理开关策略（实测结论）
+
+本机代理是 **TUN + fake-ip 模式**，会劫持 WSL 的全部 DNS 查询（实测连 8.8.8.8 都返回 198.18.x.x）。
+不同场景对代理的依赖完全不同：
+
+| 场景 | 需要代理？ | 说明 |
+|---|---|---|
+| **本地推理 `ollama run`** | ❌ 不需要 | 纯本地 GPU 计算，不联网、不心跳 |
+| `ollama pull` 拉模型 | ⚠️ 看情况 | 见下方两条路 |
+| `git push` / GitHub | ✅ 必须 | 实测 `github.com` 直连超时 |
+| 国内镜像（清华 / 上交大 / ModelScope） | ❌ 不需要 | 代理开关都飞快 |
+
+**拉模型的两条路（二选一）：**
+
+1. **关代理直连**（更干净，无需安全降级）
+   - 关代理后 DNS 返回 R2 的真实公网 IP（实测 `172.64.66.1` / `172.64.190.1`），
+     Ollama 的非公网地址检查自动通过。
+   - 切换后需 `wsl --shutdown` 重启以清 DNS 缓存。
+   - 前提：Cloudflare R2 在国内可直连（测法：`curl -sI .../r2.cloudflarestorage.com/` 得 400 即通）。
+
+2. **开代理 + `--insecure`**（已验证可行）
+   - 代价：该次拉取不校验 TLS 证书（Ollama 仍校验 blob 的 SHA256）。
+   - 仅本地可信代理场景可接受，别养成习惯。
+
+> 排查技巧：Ollama 有 SSRF 防护会拒绝非公网地址，但 **curl 没有**。
+> 所以怀疑网络问题时，用 curl 测一遍就能区分「网络不通」还是「安全检查拦截」。
 
 ---
 

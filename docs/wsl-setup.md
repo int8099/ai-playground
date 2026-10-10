@@ -194,6 +194,11 @@ python ~/gpu_check.py
 | `apt` 卡在 `archive.ubuntu.com` | 默认源在国外 | 换清华源（第 3 步） |
 | `Unable to locate package python3.12-venv` | 硬编码了 Python 版本号，与发行版不匹配 | 改用版本无关的 `python3-venv` 元包 |
 | `uv python install` 卡死 / 超时 | 它要从 github.com 下载独立 Python | 改用系统自带 Python 建 venv（第 5 步） |
+| 下载大文件提示「空间不足」但其实磁盘很空 | **WSL 的 `/tmp` 是 tmpfs（内存盘）**，通常只有 3~4G | 把下载目录换到 `$HOME` 下，别用 `/tmp` |
+| 磁盘空间检查怎么看 | `df -h /` 看根文件系统；`df -h /tmp` 看内存盘 | 两者容量可能差几百倍，别搞混 |
+| `ollama pull` 报 `redirect target not allowed: ...r2.cloudflarestorage.com resolves to non-public 198.18.x.x` | **代理用 fake-ip DNS**，把 CDN 域名解析成保留地址，触发 Ollama 的非公网地址（SSRF）防护 | `ollama pull --insecure <model>`；根治则把该域名加入代理的 `fake-ip-filter` |
+| `ollama.com/install.sh` 下载失败 | 该脚本 307 跳转到 github.com | 用 `scripts/w0-ollama.sh`（走 ghproxy.net 镜像） |
+| 在 Ubuntu 里执行 `wsl --shutdown` 报 `Command 'wsl' not found` | **`wsl` 是 Windows 程序，只能在 Windows 侧运行**；Linux 里没有它，也无法从内部关闭自己 | 打开 **Windows PowerShell** 执行 `wsl --shutdown`。⚠️ 别 `sudo apt install wsl` —— 那个包不是这回事 |
 | WSL 里显存显示不对 / 独占 | WSL2 显存由 Windows 统一管理，属正常 | 无视，看 `torch.cuda.mem_get_info()` |
 
 ---
