@@ -40,8 +40,14 @@
 |---|---|---|
 | **本地推理 `ollama run`** | ❌ 不需要 | 纯本地 GPU 计算，不联网、不心跳 |
 | `ollama pull` 拉模型 | ⚠️ 看情况 | 见下方两条路 |
-| `git push` / GitHub | ✅ 必须 | 实测 `github.com` 直连超时 |
+| `git push` / GitHub | ⚠️ **看情况** | **2026-10-11 实测：SSH 直连 push 成功**（`5813a28..b4ae377`）。但 2026-10-09 曾实测 `github.com` 直连超时。<br>两者不矛盾 —— **SSH 走 22 端口，不经过 HTTP 代理**，受代理开关影响的方式和 HTTPS 完全不同。所以别再用「GitHub 要不要开代理」这种一刀切的说法，先测一下当前网络 |
 | 国内镜像（清华 / 上交大 / ModelScope） | ❌ 不需要 | 代理开关都飞快 |
+
+> 💡 测 SSH 通不通（不产生任何副作用）：
+> ```bash
+> GIT_SSH_COMMAND="ssh -o ConnectTimeout=8" git ls-remote --heads origin
+> ```
+> 能列出分支就说明通。比直接 `git push` 卡住半天再怀疑人生快得多。
 
 **拉模型的两条路（二选一）：**
 
