@@ -1,0 +1,32 @@
+[project]
+name = "ai-playground"
+version = "0.1.0"
+description = "AI Agent 开发学习工程 —— 从 LLM 调用到多工具 Agent"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "pydantic>=2.14.0",
+    "pydantic-settings>=2.15.0",
+]
+
+# ── 打包配置 ──────────────────────────────────────────────────
+# 为什么需要这一段？
+#   我们的代码用 src layout（源码放在 src/llmkit/ 而不是项目根的 llmkit/）。
+#   这种布局下，`import llmkit` 默认【找不到】—— 因为 src/ 不在 sys.path 里。
+#   加上 build-system 之后，uv sync 会把这个包以「可编辑模式」装进 venv，
+#   于是无论从哪个目录运行脚本都能正常 import。
+#
+#   顺带一个好处：PyCharm 读到这个配置后也能正确索引 src/ 下的包。
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llmkit"]
+
+# ── 国内镜像 ──────────────────────────────────────────────────
+# 清华源，装包快很多。注意 [[tool.uv.index]] 是双括号 —— 它是数组，
+# 因为 uv 支持配置多个索引源（可以有主源 + 额外的私有源）。
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true

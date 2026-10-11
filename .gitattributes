@@ -18,11 +18,16 @@ Dockerfile    text eol=lf
 *.yml         text eol=lf
 *.yaml        text eol=lf
 *.toml        text eol=lf
+.env.example  text eol=lf
 
 # 代码
 *.py          text eol=lf
 *.md          text eol=lf
 *.gitignore   text eol=lf
+
+# 锁文件 / git 自身配置
+uv.lock        text eol=lf
+.gitattributes text eol=lf
 
 # 二进制：禁止任何转换
 *.png         binary
